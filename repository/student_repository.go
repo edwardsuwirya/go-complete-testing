@@ -1,8 +1,6 @@
 package repository
 
 import (
-	"log"
-
 	"enigmacamp.com/completetesting/model"
 	"github.com/jmoiron/sqlx"
 )
