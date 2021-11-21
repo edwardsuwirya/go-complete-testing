@@ -17,7 +17,8 @@ func (app Routes) StartGin() {
 	port := os.Getenv("API_PORT")
 
 	infraManager := manager.NewInfra()
-	useCaseManager := manager.NewUseCaseManger(infraManager)
+	repoManager := manager.NewRepoManager(infraManager)
+	useCaseManager := manager.NewUseCaseManger(repoManager)
 	defer func() {
 		if err := infraManager.SqlDb().Close(); err != nil {
 			panic(err)
