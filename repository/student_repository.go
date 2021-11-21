@@ -11,7 +11,7 @@ import (
 type IStudentRepository interface {
 	GetAll() ([]model.Student, error)
 	GetOneByName(name string) ([]model.Student, error)
-	GetOneById(idCard string) (model.Student, error)
+	GetOneById(idCard string) (*model.Student, error)
 	CreateOne(student model.Student) (*model.Student, error)
 }
 
@@ -26,20 +26,29 @@ func NewStudentRepository(resource *db.Resource) IStudentRepository {
 
 func (s *StudentRepository) GetAll() ([]model.Student, error) {
 	students := []model.Student{}
-	s.db.Select(&students, "SELECT * FROM M_STUDENT")
+	err := s.db.Select(&students, "SELECT * FROM M_STUDENT")
+	if err != nil {
+		return nil, err
+	}
 	return students, nil
 }
 
 func (s *StudentRepository) GetOneByName(name string) ([]model.Student, error) {
 	students := []model.Student{}
-	s.db.Select(&students, "SELECT * FROM M_STUDENT WHERE name like '%$1%'", name)
+	err := s.db.Select(&students, "SELECT * FROM M_STUDENT WHERE name like '%$1%'", name)
+	if err != nil {
+		return nil, err
+	}
 	return students, nil
 }
 
-func (s *StudentRepository) GetOneById(idCard string) (model.Student, error) {
+func (s *StudentRepository) GetOneById(idCard string) (*model.Student, error) {
 	student := model.Student{}
-	s.db.Get(&student, "SELECT * FROM M_STUDENT WHERE NAME id_card= $1", idCard)
-	return student, nil
+	err := s.db.Get(&student, "SELECT * FROM M_STUDENT WHERE NAME id_card= $1", idCard)
+	if err != nil {
+		return nil, err
+	}
+	return &student, nil
 }
 
 func (s *StudentRepository) CreateOne(student model.Student) (*model.Student, error) {
