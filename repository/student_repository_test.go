@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"enigmacamp.com/completetesting/db"
 	"enigmacamp.com/completetesting/model"
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/jmoiron/sqlx"
@@ -34,7 +33,7 @@ var dummyStudents = []model.Student{
 
 type StudentRepositoryTestSuite struct {
 	suite.Suite
-	mockResource *db.Resource
+	mockResource *sqlx.DB
 	mock         sqlmock.Sqlmock
 }
 
@@ -44,15 +43,13 @@ func (suite *StudentRepositoryTestSuite) SetupTest() {
 		log.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
 	sqlxDB := sqlx.NewDb(mockdb, "sqlmock")
-	suite.mockResource = &db.Resource{
-		Db: sqlxDB,
-	}
+	suite.mockResource = sqlxDB
 	suite.mock = mock
 
 }
 
 func (suite *StudentRepositoryTestSuite) TestStudentRepository_GetAll() {
-	defer suite.mockResource.Db.Close()
+	defer suite.mockResource.Close()
 	rows := sqlmock.NewRows([]string{"id", "name", "gender", "age", "join_date", "id_card", "senior"})
 	for _, d := range dummyStudents {
 		rows.AddRow(d.Id, d.Name, d.Gender, d.Age, d.JoinDate, d.IdCard, d.Senior)
