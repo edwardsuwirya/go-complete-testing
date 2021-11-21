@@ -4,9 +4,7 @@ import (
 	"log"
 	"net/http"
 
-	"enigmacamp.com/completetesting/db"
 	"enigmacamp.com/completetesting/model"
-	"enigmacamp.com/completetesting/repository"
 	"enigmacamp.com/completetesting/usecase"
 	"github.com/gin-gonic/gin"
 )
@@ -16,18 +14,17 @@ type StudentApi struct {
 	usecase usecase.IStudentUseCase
 }
 
-func NewStudentApi(router *gin.RouterGroup, resource *db.Resource) *StudentApi {
+func NewStudentApi(router *gin.RouterGroup, usecase usecase.IStudentUseCase) *StudentApi {
 	userRoute := router.Group("/student")
-	studentRepo := repository.NewStudentRepository(resource)
 	studentApi := StudentApi{
 		router:  userRoute,
-		usecase: usecase.NewStudentUseCase(studentRepo),
+		usecase: usecase,
 	}
 	studentApi.initRouter()
 	return &studentApi
 }
 func (api *StudentApi) initRouter() {
-	api.router.GET("/:name", api.getStudentById)
+	api.router.GET("/:idcard", api.getStudentById)
 	api.router.POST("", api.createStudent)
 }
 
