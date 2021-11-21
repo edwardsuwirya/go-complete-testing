@@ -1,18 +1,37 @@
-package db
+package manager
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	_ "github.com/jackc/pgx/stdlib"
 	"github.com/jmoiron/sqlx"
 )
 
-type Resource struct {
-	Db *sqlx.DB
+type Infra interface {
+	SqlDb() *sqlx.DB
 }
 
-func InitResource() (*Resource, error) {
+type infra struct {
+	db *sqlx.DB
+}
+
+func NewInfra() Infra {
+	resource, err := initDbResource()
+	if err != nil {
+		log.Panicln(err)
+	}
+	return &infra{
+		db: resource,
+	}
+}
+
+func (i *infra) SqlDb() *sqlx.DB {
+	return i.db
+}
+
+func initDbResource() (*sqlx.DB, error) {
 	host := os.Getenv("PSQL_HOST")
 	port := os.Getenv("PSQL_PORT")
 	dbName := os.Getenv("PSQL_DBNAME")
@@ -25,7 +44,5 @@ func InitResource() (*Resource, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &Resource{
-		Db: conn,
-	}, nil
+	return conn, nil
 }

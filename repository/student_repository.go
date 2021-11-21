@@ -3,7 +3,6 @@ package repository
 import (
 	"log"
 
-	"enigmacamp.com/completetesting/db"
 	"enigmacamp.com/completetesting/model"
 	"github.com/jmoiron/sqlx"
 )
@@ -19,8 +18,8 @@ type StudentRepository struct {
 	db *sqlx.DB
 }
 
-func NewStudentRepository(resource *db.Resource) IStudentRepository {
-	studentRepository := &StudentRepository{db: resource.Db}
+func NewStudentRepository(resource *sqlx.DB) IStudentRepository {
+	studentRepository := &StudentRepository{db: resource}
 	return studentRepository
 }
 
@@ -44,7 +43,7 @@ func (s *StudentRepository) GetOneByName(name string) ([]model.Student, error) {
 
 func (s *StudentRepository) GetOneById(idCard string) (*model.Student, error) {
 	student := model.Student{}
-	err := s.db.Get(&student, "SELECT * FROM M_STUDENT WHERE NAME id_card= $1", idCard)
+	err := s.db.Get(&student, "SELECT * FROM M_STUDENT WHERE id_card=$1", idCard)
 	if err != nil {
 		return nil, err
 	}
