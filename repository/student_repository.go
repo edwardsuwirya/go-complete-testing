@@ -54,7 +54,7 @@ func (s *StudentRepository) CreateOne(student model.Student) (*model.Student, er
 	lastInsertId := 0
 	err := s.db.QueryRow("INSERT INTO M_STUDENT(name,gender,age,join_date,id_card,senior) VALUES($1,$2,$3,$4,$5,$6) RETURNING id", student.Name, student.Gender, student.Age, student.JoinDate, student.IdCard, student.Senior).Scan(&lastInsertId)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 	student.Id = lastInsertId
 	return &student, nil
