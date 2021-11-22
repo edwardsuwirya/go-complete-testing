@@ -48,6 +48,9 @@ func (api *StudentApi) createStudent(c *gin.Context) {
 	}
 	registeredStudent, err := api.usecase.NewRegistration(student)
 	if err != nil {
+		c.JSON(500, gin.H{
+			"message": err.Error(),
+		})
 		return
 	}
 	c.JSON(200, gin.H{
