@@ -2,7 +2,6 @@ package delivery
 
 import (
 	"enigmacamp.com/completetesting/manager"
-	"fmt"
 	"github.com/gin-gonic/gin"
 )
 
@@ -11,19 +10,15 @@ type IDelivery interface {
 }
 
 type Routes struct {
-	apiBaseUrl   string
 	infraManager manager.Infra
 	routers      []IDelivery
 	routerEngine *gin.Engine
 	publicRoute  *gin.RouterGroup
 }
 
-func NewServer(host string, port string) *Routes {
-	apiBaseUrl := fmt.Sprintf("%s:%s", host, port)
+func NewServer(infraManager manager.Infra, useCaseManager manager.UseCaseManager) *Routes {
 	newServer := new(Routes)
-	infraManager := manager.NewInfra()
-	repoManager := manager.NewRepoManager(infraManager)
-	useCaseManager := manager.NewUseCaseManger(repoManager)
+
 	r := gin.Default()
 	publicRoute := r.Group("/api")
 	routers := []IDelivery{
@@ -31,21 +26,13 @@ func NewServer(host string, port string) *Routes {
 	}
 	newServer.infraManager = infraManager
 	newServer.routers = routers
-	newServer.apiBaseUrl = apiBaseUrl
 	newServer.routerEngine = r
 	newServer.publicRoute = publicRoute
 	return newServer
 }
-func (app *Routes) StartEngine() (e error) {
-	defer func() {
-		if err := app.infraManager.SqlDb().Close(); err != nil {
-			panic(err)
-		}
-	}()
-
+func (app *Routes) StartEngine() (rt *gin.Engine) {
 	for _, rt := range app.routers {
 		rt.InitRouter(app.publicRoute)
 	}
-	err := app.routerEngine.Run(app.apiBaseUrl)
-	return err
+	return app.routerEngine
 }
