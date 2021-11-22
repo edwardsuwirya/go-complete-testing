@@ -40,7 +40,7 @@ func (r *repoMock) GetAll() ([]model.Student, error) {
 	if args.Get(0) == nil {
 		return nil, args.Error(1)
 	}
-	return args.Get(0).([]model.Student), args.Error(1)
+	return args.Get(0).([]model.Student), nil
 }
 
 func (r *repoMock) GetOneByName(name string) ([]model.Student, error) {
@@ -48,7 +48,7 @@ func (r *repoMock) GetOneByName(name string) ([]model.Student, error) {
 	if args.Get(0) == nil {
 		return nil, args.Error(1)
 	}
-	return args.Get(0).([]model.Student), args.Error(1)
+	return args.Get(0).([]model.Student), nil
 }
 
 func (r *repoMock) GetOneById(idCard string) (*model.Student, error) {
@@ -56,7 +56,7 @@ func (r *repoMock) GetOneById(idCard string) (*model.Student, error) {
 	if args.Get(0) == nil {
 		return nil, args.Error(1)
 	}
-	return args.Get(0).(*model.Student), args.Error(1)
+	return args.Get(0).(*model.Student), nil
 }
 
 func (r *repoMock) CreateOne(student model.Student) (*model.Student, error) {
@@ -64,7 +64,7 @@ func (r *repoMock) CreateOne(student model.Student) (*model.Student, error) {
 	if args.Get(0) == nil {
 		return nil, args.Error(1)
 	}
-	return args.Get(0).(*model.Student), args.Error(1)
+	return args.Get(0).(*model.Student), nil
 }
 
 type StudentUseCaseTestSuite struct {
