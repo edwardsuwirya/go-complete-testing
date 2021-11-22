@@ -80,7 +80,8 @@ func (suite *StudentApiTestSuite) TestStudentApi_CreateStudent_Success() {
 	dummyStudent := dummyStudents[1]
 	suite.useCaseTest.(*studentUseCaseMock).On("NewRegistration", dummyStudent).Return(&dummyStudent, nil)
 
-	studentApi := NewStudentApi(suite.routerGroupTest, suite.useCaseTest)
+	studentApi := NewStudentApi(suite.useCaseTest).(*StudentApi)
+	studentApi.InitRouter(suite.routerGroupTest)
 	handler := studentApi.createStudent
 	suite.routerTest.POST("", handler)
 
@@ -103,7 +104,8 @@ func (suite *StudentApiTestSuite) TestStudentApi_CreateStudent_Success() {
 }
 func (suite *StudentApiTestSuite) TestStudentApi_CreateStudent_FailedBinding() {
 	suite.useCaseTest.(*studentUseCaseMock).On("NewRegistration", nil).Return(nil, errors.New("failed"))
-	studentApi := NewStudentApi(suite.routerGroupTest, suite.useCaseTest)
+	studentApi := NewStudentApi(suite.useCaseTest).(*StudentApi)
+	studentApi.InitRouter(suite.routerGroupTest)
 	handler := studentApi.createStudent
 	suite.routerTest.POST("", handler)
 
@@ -118,7 +120,8 @@ func (suite *StudentApiTestSuite) TestStudentApi_CreateStudent_FailedBinding() {
 func (suite *StudentApiTestSuite) TestStudentApi_CreateStudent_FailedUseCase() {
 	dummyStudent := dummyStudents[1]
 	suite.useCaseTest.(*studentUseCaseMock).On("NewRegistration", dummyStudent).Return(nil, errors.New("failed"))
-	studentApi := NewStudentApi(suite.routerGroupTest, suite.useCaseTest)
+	studentApi := NewStudentApi(suite.useCaseTest).(*StudentApi)
+	studentApi.InitRouter(suite.routerGroupTest)
 	handler := studentApi.createStudent
 	suite.routerTest.POST("", handler)
 
@@ -139,7 +142,8 @@ func (suite *StudentApiTestSuite) TestStudentApi_GetById_Success() {
 	dummyStudent := dummyStudents[0]
 	suite.useCaseTest.(*studentUseCaseMock).On("FindStudentInfoById", "2").Return(&dummyStudent, nil)
 
-	studentApi := NewStudentApi(suite.routerGroupTest, suite.useCaseTest)
+	studentApi := NewStudentApi(suite.useCaseTest).(*StudentApi)
+	studentApi.InitRouter(suite.routerGroupTest)
 	handler := studentApi.getStudentById
 	suite.routerTest.GET("/:idcard", handler)
 
