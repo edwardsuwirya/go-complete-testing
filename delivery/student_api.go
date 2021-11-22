@@ -1,7 +1,6 @@
 package delivery
 
 import (
-	"log"
 	"net/http"
 
 	"enigmacamp.com/completetesting/model"
@@ -43,7 +42,9 @@ func (api *StudentApi) createStudent(c *gin.Context) {
 	var student model.Student
 	err := c.BindJSON(&student)
 	if err != nil {
-		log.Println(err)
+		c.JSON(500, gin.H{
+			"message": err.Error(),
+		})
 		return
 	}
 	registeredStudent, err := api.usecase.NewRegistration(student)
