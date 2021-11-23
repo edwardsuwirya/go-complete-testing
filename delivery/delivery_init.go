@@ -10,13 +10,12 @@ type IDelivery interface {
 }
 
 type Routes struct {
-	infraManager manager.Infra
 	routers      []IDelivery
 	RouterEngine *gin.Engine
 	publicRoute  *gin.RouterGroup
 }
 
-func NewServer(infraManager manager.Infra, useCaseManager manager.UseCaseManager) *Routes {
+func NewServer(useCaseManager manager.UseCaseManager) *Routes {
 	newServer := new(Routes)
 
 	r := gin.Default()
@@ -24,7 +23,6 @@ func NewServer(infraManager manager.Infra, useCaseManager manager.UseCaseManager
 	routers := []IDelivery{
 		NewStudentApi(useCaseManager.StudentUseCase()),
 	}
-	newServer.infraManager = infraManager
 	newServer.routers = routers
 	newServer.RouterEngine = r
 	newServer.publicRoute = publicRoute
