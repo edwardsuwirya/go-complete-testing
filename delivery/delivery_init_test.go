@@ -19,10 +19,11 @@ type DeliveryInitTestSuite struct {
 }
 
 func (suite *DeliveryInitTestSuite) TestNewServer() {
-	mockRoutes := NewServer(new(mockUseCaseManager))
-	assert.NotNil(suite.T(), mockRoutes.RouterEngine)
-	assert.NotNil(suite.T(), mockRoutes.routers)
-	assert.NotNil(suite.T(), mockRoutes.publicRoute)
+	server := NewServer(new(mockUseCaseManager))
+	assert.NotNil(suite.T(), server.RouterEngine)
+	assert.NotNil(suite.T(), server.routers)
+	assert.NotNil(suite.T(), server.publicRoute)
+	assert.Equal(suite.T(), "/api", server.publicRoute.BasePath())
 }
 func TestDeliveryInitTestSuite(t *testing.T) {
 	suite.Run(t, new(DeliveryInitTestSuite))
