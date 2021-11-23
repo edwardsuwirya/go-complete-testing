@@ -34,7 +34,7 @@ func NewConfig() *Config {
 	config.RepoManager = repoManager
 	config.UseCaseManager = useCaseManager
 
-	router := delivery.NewServer(infraManager, useCaseManager)
+	router := delivery.NewServer(useCaseManager)
 	config.Routes = router
 
 	config.ApiBaseUrl = fmt.Sprintf("%s:%s", apiHost, apiPort)
