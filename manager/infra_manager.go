@@ -1,12 +1,9 @@
 package manager
 
 import (
-	"fmt"
-	"log"
-	"os"
-
 	_ "github.com/jackc/pgx/stdlib"
 	"github.com/jmoiron/sqlx"
+	"log"
 )
 
 type Infra interface {
@@ -17,8 +14,8 @@ type infra struct {
 	db *sqlx.DB
 }
 
-func NewInfra() Infra {
-	resource, err := initDbResource()
+func NewInfra(dataSourceName string) Infra {
+	resource, err := initDbResource(dataSourceName)
 	if err != nil {
 		log.Panicln(err)
 	}
@@ -31,16 +28,8 @@ func (i *infra) SqlDb() *sqlx.DB {
 	return i.db
 }
 
-func initDbResource() (*sqlx.DB, error) {
-	host := os.Getenv("PSQL_HOST")
-	port := os.Getenv("PSQL_PORT")
-	dbName := os.Getenv("PSQL_DBNAME")
-	dbUser := os.Getenv("PSQL_USER")
-	dbPassword := os.Getenv("PSQL_PASSWD")
-
-	url := fmt.Sprintf("postgres://%s:%s@%s:%s/%s", dbUser, dbPassword, host, port, dbName)
-
-	conn, err := sqlx.Connect("pgx", url)
+func initDbResource(dataSourceName string) (*sqlx.DB, error) {
+	conn, err := sqlx.Connect("pgx", dataSourceName)
 	if err != nil {
 		return nil, err
 	}
