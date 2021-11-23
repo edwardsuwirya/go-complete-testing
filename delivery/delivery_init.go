@@ -12,7 +12,7 @@ type IDelivery interface {
 type Routes struct {
 	infraManager manager.Infra
 	routers      []IDelivery
-	routerEngine *gin.Engine
+	RouterEngine *gin.Engine
 	publicRoute  *gin.RouterGroup
 }
 
@@ -26,13 +26,13 @@ func NewServer(infraManager manager.Infra, useCaseManager manager.UseCaseManager
 	}
 	newServer.infraManager = infraManager
 	newServer.routers = routers
-	newServer.routerEngine = r
+	newServer.RouterEngine = r
 	newServer.publicRoute = publicRoute
+	newServer.initAppRoutes()
 	return newServer
 }
-func (app *Routes) StartEngine() (rt *gin.Engine) {
+func (app *Routes) initAppRoutes() {
 	for _, rt := range app.routers {
 		rt.InitRouter(app.publicRoute)
 	}
-	return app.routerEngine
 }
