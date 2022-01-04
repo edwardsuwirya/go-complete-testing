@@ -22,8 +22,9 @@ func NewStudentApi(publicRoute *gin.RouterGroup, usecase usecase.IStudentUseCase
 	return &studentApi
 }
 func (api *StudentApi) InitRouter() {
-	api.publicRoute.GET("/:idcard", api.getStudentById)
-	api.publicRoute.POST("", api.createStudent)
+	studentRoute := api.publicRoute.Group("/student")
+	studentRoute.GET("/:idcard", api.getStudentById)
+	studentRoute.POST("", api.createStudent)
 }
 
 func (api *StudentApi) getStudentById(c *gin.Context) {
