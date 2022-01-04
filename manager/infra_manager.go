@@ -1,6 +1,7 @@
 package manager
 
 import (
+	"enigmacamp.com/completetesting/config"
 	_ "github.com/jackc/pgx/stdlib"
 	"github.com/jmoiron/sqlx"
 	"log"
@@ -14,8 +15,8 @@ type infra struct {
 	db *sqlx.DB
 }
 
-func NewInfra(dataSourceName string) Infra {
-	resource, err := initDbResource(dataSourceName)
+func NewInfra(config *config.Config) Infra {
+	resource, err := initDbResource(config.DataSourceName)
 	if err != nil {
 		log.Panicln(err)
 	}

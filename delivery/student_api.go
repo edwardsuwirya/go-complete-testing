@@ -9,19 +9,21 @@ import (
 )
 
 type StudentApi struct {
-	usecase usecase.IStudentUseCase
+	usecase     usecase.IStudentUseCase
+	publicRoute *gin.RouterGroup
 }
 
-func NewStudentApi(usecase usecase.IStudentUseCase) IDelivery {
+func NewStudentApi(publicRoute *gin.RouterGroup, usecase usecase.IStudentUseCase) *StudentApi {
 	studentApi := StudentApi{
-		usecase: usecase,
+		usecase:     usecase,
+		publicRoute: publicRoute,
 	}
+	studentApi.InitRouter()
 	return &studentApi
 }
-func (api *StudentApi) InitRouter(publicRoute *gin.RouterGroup) {
-	userRoute := publicRoute.Group("/student")
-	userRoute.GET("/:idcard", api.getStudentById)
-	userRoute.POST("", api.createStudent)
+func (api *StudentApi) InitRouter() {
+	api.publicRoute.GET("/:idcard", api.getStudentById)
+	api.publicRoute.POST("", api.createStudent)
 }
 
 func (api *StudentApi) getStudentById(c *gin.Context) {
