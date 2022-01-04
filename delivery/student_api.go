@@ -1,6 +1,7 @@
 package delivery
 
 import (
+	"errors"
 	"net/http"
 
 	"enigmacamp.com/completetesting/model"
@@ -13,13 +14,16 @@ type StudentApi struct {
 	publicRoute *gin.RouterGroup
 }
 
-func NewStudentApi(publicRoute *gin.RouterGroup, usecase usecase.IStudentUseCase) *StudentApi {
+func NewStudentApi(publicRoute *gin.RouterGroup, usecase usecase.IStudentUseCase) (*StudentApi, error) {
+	if publicRoute == nil || usecase == nil {
+		return nil, errors.New("Empty Router or UseCase")
+	}
 	studentApi := StudentApi{
 		usecase:     usecase,
 		publicRoute: publicRoute,
 	}
 	studentApi.InitRouter()
-	return &studentApi
+	return &studentApi, nil
 }
 func (api *StudentApi) InitRouter() {
 	studentRoute := api.publicRoute.Group("/student")
