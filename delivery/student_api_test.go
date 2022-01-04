@@ -68,21 +68,22 @@ type StudentApiTestSuite struct {
 	useCaseTest     usecase.IStudentUseCase
 	routerTest      *gin.Engine
 	routerGroupTest *gin.RouterGroup
+	studentApi      *StudentApi
 }
 
 func (suite *StudentApiTestSuite) SetupTest() {
 	suite.useCaseTest = new(studentUseCaseMock)
 	suite.routerTest = gin.Default()
 	suite.routerGroupTest = suite.routerTest.Group("/api")
+	studentApi := NewStudentApi(suite.routerGroupTest, suite.useCaseTest)
+	suite.studentApi = studentApi
 }
 
 func (suite *StudentApiTestSuite) TestStudentApi_CreateStudent_Success() {
 	dummyStudent := dummyStudents[1]
 	suite.useCaseTest.(*studentUseCaseMock).On("NewRegistration", dummyStudent).Return(&dummyStudent, nil)
 
-	studentApi := NewStudentApi(suite.useCaseTest).(*StudentApi)
-	studentApi.InitRouter(suite.routerGroupTest)
-	handler := studentApi.createStudent
+	handler := suite.studentApi.createStudent
 	suite.routerTest.POST("", handler)
 
 	rr := httptest.NewRecorder()
@@ -104,9 +105,7 @@ func (suite *StudentApiTestSuite) TestStudentApi_CreateStudent_Success() {
 }
 func (suite *StudentApiTestSuite) TestStudentApi_CreateStudent_FailedBinding() {
 	suite.useCaseTest.(*studentUseCaseMock).On("NewRegistration", nil).Return(nil, errors.New("failed"))
-	studentApi := NewStudentApi(suite.useCaseTest).(*StudentApi)
-	studentApi.InitRouter(suite.routerGroupTest)
-	handler := studentApi.createStudent
+	handler := suite.studentApi.createStudent
 	suite.routerTest.POST("", handler)
 
 	rr := httptest.NewRecorder()
@@ -120,9 +119,7 @@ func (suite *StudentApiTestSuite) TestStudentApi_CreateStudent_FailedBinding() {
 func (suite *StudentApiTestSuite) TestStudentApi_CreateStudent_FailedUseCase() {
 	dummyStudent := dummyStudents[1]
 	suite.useCaseTest.(*studentUseCaseMock).On("NewRegistration", dummyStudent).Return(nil, errors.New("failed"))
-	studentApi := NewStudentApi(suite.useCaseTest).(*StudentApi)
-	studentApi.InitRouter(suite.routerGroupTest)
-	handler := studentApi.createStudent
+	handler := suite.studentApi.createStudent
 	suite.routerTest.POST("", handler)
 
 	rr := httptest.NewRecorder()
@@ -142,9 +139,7 @@ func (suite *StudentApiTestSuite) TestStudentApi_GetById_Success() {
 	dummyStudent := dummyStudents[0]
 	suite.useCaseTest.(*studentUseCaseMock).On("FindStudentInfoById", "2").Return(&dummyStudent, nil)
 
-	studentApi := NewStudentApi(suite.useCaseTest).(*StudentApi)
-	studentApi.InitRouter(suite.routerGroupTest)
-	handler := studentApi.getStudentById
+	handler := suite.studentApi.getStudentById
 	suite.routerTest.GET("/:idcard", handler)
 
 	rr := httptest.NewRecorder()
