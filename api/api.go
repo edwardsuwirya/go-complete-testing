@@ -38,8 +38,8 @@ func (s *server) Run() {
 			log.Fatalln(err)
 		}
 	}(db)
-	delivery.NewServer(s.config.RouterEngine, s.usecase)
-	err := s.config.RouterEngine.Run(s.config.ApiBaseUrl)
+	err := delivery.NewServer(s.config.RouterEngine, s.usecase)
+	err = s.config.RouterEngine.Run(s.config.ApiBaseUrl)
 	if err != nil {
 		log.Fatal(err)
 	}

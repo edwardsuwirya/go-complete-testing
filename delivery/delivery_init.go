@@ -5,7 +5,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func NewServer(engine *gin.Engine, useCaseManager manager.UseCaseManager) {
+func NewServer(engine *gin.Engine, useCaseManager manager.UseCaseManager) error {
 	publicRoute := engine.Group("/api")
-	NewStudentApi(publicRoute, useCaseManager.StudentUseCase())
+	_, err := NewStudentApi(publicRoute, useCaseManager.StudentUseCase())
+	return err
 }
