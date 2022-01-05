@@ -29,15 +29,15 @@ func NewConfig() *Config {
 	dsn := fmt.Sprintf("postgres://%s:%s@%s:%s/%s", dbUser, dbPassword, dbHost, dbPort, dbName)
 	config.DataSourceName = dsn
 
-	r := gin.Default()
-	config.RouterEngine = r
-
-	config.ApiBaseUrl = fmt.Sprintf("%s:%s", apiHost, apiPort)
-
 	if isDebug == "Y" || isDebug == "y" {
 		config.AppLogger = lgr.New(true)
+		gin.SetMode(gin.DebugMode)
 	} else {
 		config.AppLogger = lgr.New(false)
+		gin.SetMode(gin.ReleaseMode)
 	}
+	r := gin.Default()
+	config.RouterEngine = r
+	config.ApiBaseUrl = fmt.Sprintf("%s:%s", apiHost, apiPort)
 	return config
 }
