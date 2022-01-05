@@ -13,7 +13,7 @@ type repoManager struct {
 }
 
 func (rm *repoManager) StudentRepo() repository.IStudentRepository {
-	return repository.NewStudentRepository(rm.infra.SqlDb(), rm.infra.Logger())
+	return repository.NewStudentRepository(rm.infra.SqlDb())
 }
 
 func NewRepoManager(infra Infra) RepoManager {

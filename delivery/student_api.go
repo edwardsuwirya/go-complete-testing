@@ -3,7 +3,6 @@ package delivery
 import (
 	appresponse "enigmacamp.com/completetesting/delivery/app_response"
 	"enigmacamp.com/completetesting/util/app_status"
-	"enigmacamp.com/completetesting/util/logger"
 	"errors"
 	"net/http"
 
@@ -15,17 +14,15 @@ import (
 type StudentApi struct {
 	useCase     usecase.IStudentUseCase
 	publicRoute *gin.RouterGroup
-	logger      *logger.AppLogger
 }
 
-func NewStudentApi(publicRoute *gin.RouterGroup, usecase usecase.IStudentUseCase, logger *logger.AppLogger) (*StudentApi, error) {
+func NewStudentApi(publicRoute *gin.RouterGroup, usecase usecase.IStudentUseCase) (*StudentApi, error) {
 	if publicRoute == nil || usecase == nil {
 		return nil, errors.New("Empty Router or UseCase")
 	}
 	studentApi := StudentApi{
 		useCase:     usecase,
 		publicRoute: publicRoute,
-		logger:      logger,
 	}
 	studentApi.InitRouter()
 	return &studentApi, nil
@@ -38,7 +35,7 @@ func (api *StudentApi) InitRouter() {
 }
 func (api *StudentApi) getAllStudent(c *gin.Context) {
 	students, err := api.useCase.GetStudentList()
-	resp := appresponse.NewJsonResponse(c, api.logger)
+	resp := appresponse.NewJsonResponse(c)
 	if err != nil {
 		resp.SendError(http.StatusInternalServerError, appresponse.NewErrorMessage(app_status.GeneralError, "Failed Get Student List"), err)
 		return
@@ -48,7 +45,7 @@ func (api *StudentApi) getAllStudent(c *gin.Context) {
 func (api *StudentApi) getStudentById(c *gin.Context) {
 	name := c.Param("idcard")
 	student, err := api.useCase.FindStudentInfoById(name)
-	resp := appresponse.NewJsonResponse(c, api.logger)
+	resp := appresponse.NewJsonResponse(c)
 	if err != nil {
 		resp.SendError(http.StatusBadRequest, appresponse.NewErrorMessage(app_status.GeneralError, "Failed Get Student By ID"), err)
 		return
@@ -57,7 +54,7 @@ func (api *StudentApi) getStudentById(c *gin.Context) {
 }
 func (api *StudentApi) createStudent(c *gin.Context) {
 	var student model.Student
-	resp := appresponse.NewJsonResponse(c, api.logger)
+	resp := appresponse.NewJsonResponse(c)
 	err := c.BindJSON(&student)
 	if err != nil {
 		resp.SendError(http.StatusBadRequest, appresponse.NewErrorMessage(app_status.ErrorLackInfo, app_status.StatusText(app_status.ErrorLackInfo)), err)

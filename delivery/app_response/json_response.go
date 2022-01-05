@@ -7,8 +7,7 @@ import (
 )
 
 type JsonResponse struct {
-	c      *gin.Context
-	logger *logger.AppLogger
+	c *gin.Context
 }
 
 func (j *JsonResponse) SendData(message *ResponseMessage) {
@@ -16,10 +15,10 @@ func (j *JsonResponse) SendData(message *ResponseMessage) {
 }
 
 func (j *JsonResponse) SendError(httpCode int, errMessage *ErrorMessage, err error) {
-	j.logger.Log.Error().Err(err).Strs("ROUTE", []string{j.c.Request.Method, j.c.Request.URL.Path}).Int("CODE", httpCode).Msg(errMessage.ErrorDescription)
+	logger.Log.Error().Err(err).Strs("ROUTE", []string{j.c.Request.Method, j.c.Request.URL.Path}).Int("CODE", httpCode).Msg(errMessage.ErrorDescription)
 	j.c.AbortWithStatusJSON(httpCode, errMessage)
 }
 
-func NewJsonResponse(c *gin.Context, logger *logger.AppLogger) IAppHttpResponse {
-	return &JsonResponse{c, logger}
+func NewJsonResponse(c *gin.Context) IAppHttpResponse {
+	return &JsonResponse{c}
 }

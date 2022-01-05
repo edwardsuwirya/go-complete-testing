@@ -12,7 +12,6 @@ type Config struct {
 	RouterEngine   *gin.Engine
 	DataSourceName string
 	ApiBaseUrl     string
-	AppLogger      *lgr.AppLogger
 }
 
 func NewConfig() *Config {
@@ -32,13 +31,13 @@ func NewConfig() *Config {
 
 	if isDebug == "Y" || isDebug == "y" {
 		gin.SetMode(gin.DebugMode)
-		config.AppLogger = lgr.New(true)
+		lgr.New(true)
 	} else {
 		gin.SetMode(gin.ReleaseMode)
-		config.AppLogger = lgr.New(false)
+		lgr.New(false)
 	}
 	r := gin.New()
-	r.Use(appMiddleware.NewLogRequestMiddleware(config.AppLogger).Log())
+	r.Use(appMiddleware.NewLogRequestMiddleware().Log())
 	r.Use(gin.Recovery())
 	config.RouterEngine = r
 

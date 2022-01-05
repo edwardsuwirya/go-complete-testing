@@ -9,31 +9,24 @@ import (
 
 type Infra interface {
 	SqlDb() *sqlx.DB
-	Logger() *logger.AppLogger
 }
 
 type infra struct {
-	db     *sqlx.DB
-	logger *logger.AppLogger
+	db *sqlx.DB
 }
 
 func NewInfra(config *config.Config) Infra {
-	logger := config.AppLogger
 	resource, err := initDbResource(config.DataSourceName)
 	if err != nil {
 		logger.Log.Fatal().Err(err).Msg("Database Failed To Start")
 	}
 	return &infra{
-		db:     resource,
-		logger: logger,
+		db: resource,
 	}
 }
 
 func (i *infra) SqlDb() *sqlx.DB {
 	return i.db
-}
-func (i *infra) Logger() *logger.AppLogger {
-	return i.logger
 }
 func initDbResource(dataSourceName string) (*sqlx.DB, error) {
 	conn, err := sqlx.Connect("pgx", dataSourceName)
