@@ -45,11 +45,13 @@ func (suite *StudentRepositoryTestSuite) SetupTest() {
 	sqlxDB := sqlx.NewDb(mockdb, "sqlmock")
 	suite.mockResource = sqlxDB
 	suite.mock = mock
+}
 
+func (suite *StudentRepositoryTestSuite) TearDownTest() {
+	suite.mockResource.Close()
 }
 
 func (suite *StudentRepositoryTestSuite) TestStudentRepository_GetAll() {
-	defer suite.mockResource.Close()
 	rows := sqlmock.NewRows([]string{"id", "name", "gender", "age", "join_date", "id_card", "senior"})
 	for _, d := range dummyStudents {
 		rows.AddRow(d.Id, d.Name, d.Gender, d.Age, d.JoinDate, d.IdCard, d.Senior)
