@@ -3,6 +3,7 @@ package repository
 import (
 	"enigmacamp.com/completetesting/model"
 	"enigmacamp.com/completetesting/util/logger"
+	"fmt"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -25,11 +26,12 @@ func NewStudentRepository(resource *sqlx.DB, logger *logger.AppLogger) IStudentR
 
 func (s *StudentRepository) GetAll() ([]model.Student, error) {
 	students := []model.Student{}
-	err := s.db.Select(&students, "SELECT * FROM M_STUDENTss")
+	err := s.db.Select(&students, "SELECT * FROM M_STUDENT")
 	if err != nil {
 		s.log.Log.Error().Err(err).Str("DOMAIN", "Student").Msg("Failed Get All")
 		return nil, err
 	}
+	s.log.Log.Debug().Msg(fmt.Sprintf("%v", students))
 	return students, nil
 }
 
