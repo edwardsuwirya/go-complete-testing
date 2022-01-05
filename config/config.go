@@ -1,6 +1,7 @@
 package config
 
 import (
+	lgr "enigmacamp.com/completetesting/util/logger"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"os"
@@ -10,6 +11,7 @@ type Config struct {
 	RouterEngine   *gin.Engine
 	DataSourceName string
 	ApiBaseUrl     string
+	AppLogger      *lgr.AppLogger
 }
 
 func NewConfig() *Config {
@@ -23,6 +25,7 @@ func NewConfig() *Config {
 	dbUser := os.Getenv("DB_USER")
 	dbPassword := os.Getenv("DB_PASSWORD")
 
+	isDebug := os.Getenv("DEBUG")
 	dsn := fmt.Sprintf("postgres://%s:%s@%s:%s/%s", dbUser, dbPassword, dbHost, dbPort, dbName)
 	config.DataSourceName = dsn
 
@@ -30,5 +33,11 @@ func NewConfig() *Config {
 	config.RouterEngine = r
 
 	config.ApiBaseUrl = fmt.Sprintf("%s:%s", apiHost, apiPort)
+
+	if isDebug == "Y" || isDebug == "y" {
+		config.AppLogger = lgr.New(true)
+	} else {
+		config.AppLogger = lgr.New(false)
+	}
 	return config
 }

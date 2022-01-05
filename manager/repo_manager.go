@@ -1,6 +1,8 @@
 package manager
 
-import "enigmacamp.com/completetesting/repository"
+import (
+	"enigmacamp.com/completetesting/repository"
+)
 
 type RepoManager interface {
 	StudentRepo() repository.IStudentRepository
@@ -11,9 +13,9 @@ type repoManager struct {
 }
 
 func (rm *repoManager) StudentRepo() repository.IStudentRepository {
-	return repository.NewStudentRepository(rm.infra.SqlDb())
+	return repository.NewStudentRepository(rm.infra.SqlDb(), rm.infra.Logger())
 }
 
 func NewRepoManager(infra Infra) RepoManager {
-	return &repoManager{infra}
+	return &repoManager{infra: infra}
 }

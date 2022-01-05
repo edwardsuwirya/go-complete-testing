@@ -8,6 +8,7 @@ import (
 type IStudentUseCase interface {
 	NewRegistration(student model.Student) (*model.Student, error)
 	FindStudentInfoById(idCard string) (*model.Student, error)
+	GetStudentList() ([]model.Student, error)
 }
 
 type StudentUseCase struct {
@@ -24,4 +25,7 @@ func (s *StudentUseCase) NewRegistration(student model.Student) (*model.Student,
 
 func (s *StudentUseCase) FindStudentInfoById(idCard string) (*model.Student, error) {
 	return s.repo.GetOneById(idCard)
+}
+func (s *StudentUseCase) GetStudentList() ([]model.Student, error) {
+	return s.repo.GetAll()
 }

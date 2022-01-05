@@ -5,7 +5,8 @@ import (
 	"enigmacamp.com/completetesting/config"
 	"enigmacamp.com/completetesting/delivery"
 	"enigmacamp.com/completetesting/manager"
-	"log"
+	"enigmacamp.com/completetesting/util/logger"
+	"fmt"
 )
 
 type Server interface {
@@ -16,6 +17,7 @@ type server struct {
 	config  *config.Config
 	infra   manager.Infra
 	usecase manager.UseCaseManager
+	logger  *logger.AppLogger
 }
 
 func NewApiServer() Server {
@@ -27,6 +29,7 @@ func NewApiServer() Server {
 		config:  appConfig,
 		infra:   infra,
 		usecase: usecase,
+		logger:  appConfig.AppLogger,
 	}
 }
 
@@ -35,12 +38,14 @@ func (s *server) Run() {
 	defer func(db *sql.DB) {
 		err := db.Close()
 		if err != nil {
-			log.Fatalln(err)
+			s.logger.Log.Fatal().Msg("Database Failed To Close")
 		}
 	}(db)
-	err := delivery.NewServer(s.config.RouterEngine, s.usecase)
+	err := delivery.NewServer(s.config.RouterEngine, s.usecase, s.logger)
+	s.logger.Log.Info().Msg(fmt.Sprintf("Server Runs on %s", s.config.ApiBaseUrl))
 	err = s.config.RouterEngine.Run(s.config.ApiBaseUrl)
 	if err != nil {
-		log.Fatal(err)
+		s.logger.Log.Fatal().Err(err).Msg("Server Failed To Run")
 	}
+
 }
