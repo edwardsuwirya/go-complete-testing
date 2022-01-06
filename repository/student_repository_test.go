@@ -65,6 +65,18 @@ func (suite *StudentRepositoryTestSuite) TestStudentRepository_GetAll() {
 	assert.Equal(suite.T(), 2, len(all))
 	assert.Equal(suite.T(), 1, all[0].Id)
 }
+
+func (suite *StudentRepositoryTestSuite) TestStudentRepository_CreateOne() {
+	rows := sqlmock.NewRows([]string{"id"})
+	rows.AddRow(23)
+	suite.mock.ExpectQuery("INSERT INTO M_STUDENT").
+		WillReturnRows(rows)
+
+	repo := NewStudentRepository(suite.mockResource)
+	all, err := repo.CreateOne(dummyStudents[0])
+	assert.Nil(suite.T(), err)
+	assert.Equal(suite.T(), 23, all.Id)
+}
 func TestStudentRepositoryTestSuite(t *testing.T) {
 	suite.Run(t, new(StudentRepositoryTestSuite))
 }
