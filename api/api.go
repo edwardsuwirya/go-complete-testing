@@ -42,12 +42,12 @@ func (s *server) Run() {
 	defer func(db *sql.DB) {
 		err := db.Close()
 		if err != nil {
-			logger.Log.Fatal().Msg("Database Failed To Close")
+			logger.F(err, "Server Failed To Run")
 		}
 	}(db)
 	err := delivery.NewServer(s.config.RouterEngine, s.usecase)
 	if err != nil {
-		logger.Log.Fatal().Err(err).Msg("Server Failed To Run")
+		logger.F(err, "Server Failed To Run")
 	}
 	logger.Log.Info().Msg(fmt.Sprintf("Server Runs on %s", s.config.ApiBaseUrl))
 	srv := &http.Server{
@@ -56,7 +56,7 @@ func (s *server) Run() {
 	}
 	go func() {
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			logger.Log.Fatal().Err(err).Msg("Server Failed To Run")
+			logger.F(err, "Server Failed To Run")
 		}
 	}()
 	quit := make(chan os.Signal, 1)
@@ -65,8 +65,8 @@ func (s *server) Run() {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	if err := srv.Shutdown(ctx); err != nil {
-		logger.Log.Fatal().Err(err).Msg("Server Failed To Shutdown")
+		logger.F(err, "Server Failed To Shutdown")
 	}
 
-	logger.Log.Info().Msg("Server Is Exiting")
+	logger.I("Server Is Exiting")
 }

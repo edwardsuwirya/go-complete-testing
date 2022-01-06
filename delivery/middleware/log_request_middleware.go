@@ -14,6 +14,6 @@ func NewLogRequestMiddleware() *LogRequestMiddleware {
 
 func (v *LogRequestMiddleware) Log() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		logger.Log.Info().Strs("ROUTE", []string{c.Request.Method, c.Request.URL.Path}).Msg("New Request")
+		logger.IS("DELIVERY", []string{c.Request.Method, c.Request.URL.Path}, "New Request")
 	}
 }

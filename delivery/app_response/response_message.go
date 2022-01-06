@@ -10,9 +10,14 @@ type ResponseMessage struct {
 	Description string      `json:"message"`
 	Data        interface{} `json:"data"`
 }
+
 type ErrorMessage struct {
-	ErrorCode        string `json:"errorCode"`
-	ErrorDescription string `json:"message"`
+	HttpCode         int
+	ErrorDescription ErrorDescription
+}
+type ErrorDescription struct {
+	Code        string `json:"errorCode"`
+	Description string `json:"message"`
 }
 
 func NewResponseMessage(code string, description string, data interface{}) *ResponseMessage {
@@ -21,10 +26,13 @@ func NewResponseMessage(code string, description string, data interface{}) *Resp
 	}
 }
 
-func NewErrorMessage(errCode string, message string) *ErrorMessage {
+func NewErrorMessage(httpCode int, errCode string, message string) *ErrorMessage {
 	em := &ErrorMessage{
-		ErrorCode:        errCode,
-		ErrorDescription: message,
+		HttpCode: httpCode,
+		ErrorDescription: ErrorDescription{
+			Code:        errCode,
+			Description: message,
+		},
 	}
 	return em
 }
