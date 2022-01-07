@@ -47,6 +47,11 @@ type studentUseCaseMock struct {
 	mock.Mock
 }
 
+/*
+Untuk HTTP client test
+http://hassansin.github.io/Unit-Testing-http-client-in-Go
+*/
+
 func (s *studentUseCaseMock) NewRegistration(student model.Student) (*model.Student, error) {
 	args := s.Called(student)
 	if args.Get(0) == nil {
