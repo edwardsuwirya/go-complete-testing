@@ -44,11 +44,9 @@ func (api *StudentApi) getStudentById(c *gin.Context) {
 }
 func (api *StudentApi) createStudent(c *gin.Context) {
 	var student model.Student
-	err := c.BindJSON(&student)
+	err := c.ShouldBindJSON(&student)
 	if err != nil {
-		c.JSON(500, gin.H{
-			"message": err.Error(),
-		})
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"err": "Data is required"})
 		return
 	}
 	registeredStudent, err := api.usecase.NewRegistration(student)
