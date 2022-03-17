@@ -1,6 +1,7 @@
 package delivery
 
 import (
+	appresponse "enigmacamp.com/completetesting/httputil"
 	"errors"
 	"net/http"
 
@@ -31,16 +32,25 @@ func (api *StudentApi) InitRouter() {
 	studentRoute.POST("", api.createStudent)
 }
 
+// getStudentById godoc
+// @Summary      Show student
+// @Description  get student by ID Card
+// @Tags         students
+// @Produce      json
+// @Param        idcard   path      int  true  "Student ID Card"
+// @Success      200  {object}  model.Student
+// @Failure      400  {object}  httputil.HTTPError
+// @Failure      404  {object}  httputil.HTTPError
+// @Router       /student/{idcard} [get]
 func (api *StudentApi) getStudentById(c *gin.Context) {
 	name := c.Param("idcard")
 	student, err := api.usecase.FindStudentInfoById(name)
+	resp := appresponse.NewJsonResponse(c)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"err": err.Error()})
+		resp.SendError(appresponse.NewErrorMessage(http.StatusBadRequest, "X00", err.Error()))
 		return
 	}
-	c.JSON(200, gin.H{
-		"message": student,
-	})
+	resp.SendData(appresponse.NewResponseMessage("00", "", student))
 }
 func (api *StudentApi) createStudent(c *gin.Context) {
 	var student model.Student

@@ -3,6 +3,8 @@ package config
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/swaggo/files"
+	"github.com/swaggo/gin-swagger"
 	"os"
 )
 
@@ -27,6 +29,7 @@ func NewConfig() *Config {
 	config.DataSourceName = dsn
 
 	r := gin.Default()
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	config.RouterEngine = r
 
 	config.ApiBaseUrl = fmt.Sprintf("%s:%s", apiHost, apiPort)
